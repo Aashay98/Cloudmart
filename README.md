@@ -9,7 +9,7 @@ Cloud Mart aims to:
 - Ensure secure transactions and data protection using cloud-based security measures.
 
 ## 🛠️ Key Features
-- **Multi-Cloud Integration**: Utilizes AWS and Azure services for hosting, storage, and scaling.
+- **Multi-Cloud Integration**: Utilizes AWS services for hosting, storage, and scaling.
 - **Secure Authentication**: Implements OAuth2 and JWT for user authentication and authorization.
 - **Product Management**: Manage products with real-time updates and inventory tracking.
 - **Order Processing**: Efficient order management with payment gateway integration.
