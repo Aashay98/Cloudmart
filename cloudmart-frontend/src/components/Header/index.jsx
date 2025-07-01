@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ShoppingCart, Menu, User } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ShoppingCart, Menu, User, LogOut, Settings } from 'lucide-react';
+import { toast } from 'react-toastify';
 import SideBar from '../SideBar';
-import { getUser } from '../../utils/userUtils';
+import { getUser, isAuthenticated, clearAuthData } from '../../utils/authUtils';
 import { getCartItemsCount } from '../../utils/cartUtils';
 
 const Header = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
-  const [userName, setUserName] = useState('Anonymous');
+  const [userName, setUserName] = useState('Guest');
   const [cartItemsCount, setCartItemsCount] = useState(0);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const navigate = useNavigate();
+  const authenticated = isAuthenticated();
 
   useEffect(() => {
     const user = getUser();
     if (user) {
-      setUserName(`${user.firstName}`.trim() || 'Anonymous');
+      setUserName(`${user.firstName}`.trim() || 'User');
     }
 
     const updateCartCount = () => {
@@ -21,7 +25,6 @@ const Header = () => {
     };
 
     updateCartCount();
-
     window.addEventListener('cartUpdated', updateCartCount);
 
     return () => {
@@ -30,6 +33,22 @@ const Header = () => {
   }, []);
 
   const toggleSideBar = () => setIsSideBarOpen(!isSideBarOpen);
+
+  const handleLogout = () => {
+    clearAuthData();
+    toast.success('Logged out successfully');
+    navigate('/');
+    setShowUserMenu(false);
+  };
+
+  const handleProfileClick = () => {
+    if (authenticated) {
+      navigate('/profile');
+    } else {
+      navigate('/login');
+    }
+    setShowUserMenu(false);
+  };
 
   return (
     <>
@@ -42,10 +61,58 @@ const Header = () => {
             <Link to="/" className="text-2xl font-bold">CloudMart</Link>
           </div>
           <div className="flex items-center space-x-4">
-            <Link to="/profile" className="flex items-center cursor-pointer">
-              <User className="h-6 w-6 mr-2" />
-              <span className="hidden md:inline">{userName}</span>
-            </Link>
+            <div className="relative">
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center cursor-pointer hover:bg-blue-700 px-3 py-2 rounded-md transition-colors"
+              >
+                <User className="h-6 w-6 mr-2" />
+                <span className="hidden md:inline">{userName}</span>
+              </button>
+              
+              {showUserMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                  {authenticated ? (
+                    <>
+                      <button
+                        onClick={handleProfileClick}
+                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        <Settings className="h-4 w-4 mr-2" />
+                        Profile Settings
+                      </button>
+                      <button
+                        onClick={handleLogout}
+                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Logout
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        to="/login"
+                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <User className="h-4 w-4 mr-2" />
+                        Login
+                      </Link>
+                      <Link
+                        to="/register"
+                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <User className="h-4 w-4 mr-2" />
+                        Register
+                      </Link>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+            
             <Link to="/cart" className="relative cursor-pointer">
               <ShoppingCart className="h-6 w-6" />
               {cartItemsCount > 0 && (
