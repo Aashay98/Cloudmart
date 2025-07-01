@@ -1,0 +1,21 @@
+{
+  "name": "cloudmart-workspace",
+  "version": "1.0.0",
+  "description": "CloudMart e-commerce platform workspace",
+  "scripts": {
+    "install:frontend": "cd frontend && npm install",
+    "install:backend": "cd backend && npm install",
+    "install:all": "npm run install:frontend && npm run install:backend",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "build:frontend": "cd frontend && npm run build",
+    "start:backend": "cd backend && npm start"
+  },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "keywords": ["ecommerce", "react", "nodejs", "aws"],
+  "author": "",
+  "license": "ISC"
+}
