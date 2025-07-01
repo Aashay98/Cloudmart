@@ -26,7 +26,7 @@ Cloud Mart aims to:
 - RESTful APIs
 
 **Database:**
-- DyanmoDB
+- DynamoDB
 
 **Cloud Providers:**
 - AWS (DynamoDB, Bedrock, S3, EC2, Lambda, CloudWatch, EKS, ECS)
