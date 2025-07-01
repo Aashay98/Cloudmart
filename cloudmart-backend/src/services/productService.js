@@ -17,13 +17,14 @@ export const createProduct = async (product) => {
   const params = {
     TableName: TABLE_NAME,
     Item: {
-      ...product,       
-      id:uuidv4().split('-')[0],
-      createdAt: new Date().toISOString()}
+      ...product,
+      id: uuidv4().split('-')[0],
+      createdAt: new Date().toISOString()
+    }
   };
 
   await dynamoDb.put(params).promise();
-  return product;
+  return params.Item;
 };
 
 export const getAllProducts = async () => {
