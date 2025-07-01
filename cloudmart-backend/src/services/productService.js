@@ -1,15 +1,6 @@
 // services/productService.js
-import pkg from 'aws-sdk';
-const { DynamoDB } = pkg;
-import dotenv from 'dotenv';
-dotenv.config();
+import { dynamoDb }from "../dbClient"
 import { v4 as uuidv4 } from 'uuid';
-
-const dynamoDb = new DynamoDB.DocumentClient({
-  region: process.env.AWS_REGION,
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-});
 
 const TABLE_NAME = 'cloudmart-products';
 
@@ -47,25 +38,31 @@ export const getProductById = async (id) => {
 };
 
 export const updateProduct = async (id, updates) => {
+  const updateExpr = [];
+  const exprAttrNames = {};
+  const exprAttrValues = {};
+
+  Object.entries(updates).forEach(([key, value], index) => {
+    const nameKey = `#key${index}`;
+    const valueKey = `:val${index}`;
+    updateExpr.push(`${nameKey} = ${valueKey}`);
+    exprAttrNames[nameKey] = key;
+    exprAttrValues[valueKey] = value;
+  });
+
   const params = {
     TableName: TABLE_NAME,
     Key: { id },
-    UpdateExpression: 'set #n = :n, price = :p, image = :i, description = :d',
-    ExpressionAttributeNames: {
-      '#n': 'name'
-    },
-    ExpressionAttributeValues: {
-      ':n': updates.name,
-      ':p': updates.price,
-      ':i': updates.image,
-      ':d': updates.description
-    },
+    UpdateExpression: `set ${updateExpr.join(', ')}`,
+    ExpressionAttributeNames: exprAttrNames,
+    ExpressionAttributeValues: exprAttrValues,
     ReturnValues: 'ALL_NEW'
   };
 
   const result = await dynamoDb.update(params).promise();
   return result.Attributes;
 };
+
 
 export const deleteProduct = async (id) => {
   const params = {

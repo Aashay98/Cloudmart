@@ -5,12 +5,15 @@ import {
 } from "@aws-sdk/client-bedrock-agent-runtime";
 import { Readable } from "stream";
 import pkg from "@smithy/eventstream-codec";
-
+import { v4 as uuidv4 } from 'uuid';
+import { dynamoDb } from '../dbClient.js'; // Assuming centralized client
 const { EventStreamCodec } = pkg;
 import dotenv from "dotenv";
 import { deleteOrder, getOrderById, cancelOrder } from "./orderService.js";
 
 dotenv.config();
+
+const TABLE_NAME = 'cloudmart-products';
 
 const bedrockAgentClient = new BedrockAgentRuntimeClient({
   region: "us-east-1",
@@ -134,7 +137,8 @@ export const sendOpenAIMessage = async (threadId, message) => {
     throw new Error("No response from assistant");
   }
 
-  return assistantMessages[0].content[0].text.value;
+  return assistantMessages[0].content.map(c => c.text?.value ?? "").join("\n");
+  ;
 };
 // Bedrock Functions
 
@@ -215,7 +219,62 @@ export const sendBedrockMessage = async (sessionId, message) => {
   }
 };
 
+const sampleProducts = [
+  {
+    name: 'Wireless Bluetooth Headphones',
+    price: 59.99,
+    image: 'https://example.com/images/headphones.jpg',
+    description: 'Noise-cancelling wireless headphones with 30-hour battery life.',
+    category: 'Electronics'
+  },
+  {
+    name: 'Smart Fitness Watch',
+    price: 129.99,
+    image: 'https://example.com/images/fitness-watch.jpg',
+    description: 'Track your workouts and monitor heart rate on the go.',
+    category: 'Wearables'
+  },
+  {
+    name: 'Eco-Friendly Water Bottle',
+    price: 19.95,
+    image: 'https://example.com/images/water-bottle.jpg',
+    description: 'BPA-free, stainless steel water bottle for everyday use.',
+    category: 'Lifestyle'
+  },
+  {
+    name: 'Portable Phone Charger',
+    price: 34.50,
+    image: 'https://example.com/images/charger.jpg',
+    description: 'Compact 10,000mAh power bank with fast charging support.',
+    category: 'Electronics'
+  },
+  {
+    name: 'Standing Desk Converter',
+    price: 249.99,
+    image: 'https://example.com/images/desk-converter.jpg',
+    description: 'Ergonomic desk solution to work while standing.',
+    category: 'Office'
+  }
+];
+
 export async function populateProductsTable() {
-  // Implementation to populate the DynamoDB table with sample data
-  // This would be similar to what was in the PopulateProductsTableFunction
+  for (const product of sampleProducts) {
+    const params = {
+      TableName: TABLE_NAME,
+      Item: {
+        ...product,
+        id: uuidv4(),
+        createdAt: new Date().toISOString()
+      }
+    };
+
+    try {
+      await dynamoDb.put(params).promise();
+      console.log(`Inserted product: ${product.name}`);
+    } catch (error) {
+      console.error(`Failed to insert product ${product.name}:`, error);
+    }
+  }
+
+  console.log('Finished populating the products table.');
 }

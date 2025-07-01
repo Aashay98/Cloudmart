@@ -1,15 +1,6 @@
 
-import pkg from 'aws-sdk';
-const { DynamoDB } = pkg;
-import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
-
-dotenv.config();
-const dynamoDb = new DynamoDB.DocumentClient({
-  region: process.env.AWS_REGION,
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-});
+import { dynamoDb } from "../dbClient"
 
 const TABLE_NAME = 'cloudmart-orders';
 
@@ -18,7 +9,7 @@ export const createOrder = async (order) => {
     TableName: TABLE_NAME,
     Item: {
       ...order,
-      id:uuidv4().split('-')[0],
+      id: uuidv4().split('-')[0],
       createdAt: new Date().toISOString()
     }
   };
@@ -49,27 +40,36 @@ export const getOrderById = async (id) => {
 export const getOrdersByUserEmail = async (email) => {
   const params = {
     TableName: TABLE_NAME,
-    FilterExpression: 'userEmail = :email',
+    IndexName: 'UserEmailIndex',
+    KeyConditionExpression: 'userEmail = :email',
     ExpressionAttributeValues: {
-      ':email': email
-    }
+      ':email': email,
+    },
   };
 
-  const result = await dynamoDb.scan(params).promise();
+  const result = await dynamoDb.query(params).promise();
   return result.Items;
 };
 
 export const updateOrder = async (id, updates) => {
+  const updateExpr = [];
+  const exprAttrNames = {};
+  const exprAttrValues = {};
+
+  Object.entries(updates).forEach(([key, value], index) => {
+    const attrName = `#key${index}`;
+    const attrValue = `:val${index}`;
+    updateExpr.push(`${attrName} = ${attrValue}`);
+    exprAttrNames[attrName] = key;
+    exprAttrValues[attrValue] = value;
+  });
+
   const params = {
     TableName: TABLE_NAME,
     Key: { id },
-    UpdateExpression: 'set #status = :status',
-    ExpressionAttributeNames: {
-      '#status': 'status'
-    },
-    ExpressionAttributeValues: {
-      ':status': updates.status
-    },
+    UpdateExpression: `set ${updateExpr.join(', ')}`,
+    ExpressionAttributeNames: exprAttrNames,
+    ExpressionAttributeValues: exprAttrValues,
     ReturnValues: 'ALL_NEW'
   };
 
