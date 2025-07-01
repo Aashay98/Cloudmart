@@ -14,16 +14,19 @@ const dynamoDb = new DynamoDB.DocumentClient({
 const TABLE_NAME = 'cloudmart-products';
 
 export const createProduct = async (product) => {
+  const newProduct = {
+    ...product,
+    id: uuidv4().split('-')[0],
+    createdAt: new Date().toISOString()
+  };
+
   const params = {
     TableName: TABLE_NAME,
-    Item: {
-      ...product,       
-      id:uuidv4().split('-')[0],
-      createdAt: new Date().toISOString()}
+    Item: newProduct
   };
 
   await dynamoDb.put(params).promise();
-  return product;
+  return newProduct;
 };
 
 export const getAllProducts = async () => {
