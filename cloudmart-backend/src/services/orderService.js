@@ -17,9 +17,8 @@ export const createOrder = async (order) => {
     TableName: TABLE_NAME,
     Item: {
       ...order,
-      id: uuidv4().split('-')[0],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      id:uuidv4().split('-')[0],
+      createdAt: new Date().toISOString()
     }
   };
 
@@ -59,48 +58,17 @@ export const getOrdersByUserEmail = async (email) => {
   return result.Items;
 };
 
-export const getOrdersByUserId = async (userId) => {
-  const params = {
-    TableName: TABLE_NAME,
-    FilterExpression: 'userId = :userId',
-    ExpressionAttributeValues: {
-      ':userId': userId
-    }
-  };
-
-  const result = await dynamoDb.scan(params).promise();
-  return result.Items;
-};
-
 export const updateOrder = async (id, updates) => {
-  const allowedUpdates = ['status', 'items', 'total'];
-  const updateExpression = [];
-  const expressionAttributeNames = {};
-  const expressionAttributeValues = {};
-
-  Object.keys(updates).forEach(key => {
-    if (allowedUpdates.includes(key)) {
-      updateExpression.push(`#${key} = :${key}`);
-      expressionAttributeNames[`#${key}`] = key;
-      expressionAttributeValues[`:${key}`] = updates[key];
-    }
-  });
-
-  if (updateExpression.length === 0) {
-    throw new Error('No valid fields to update');
-  }
-
-  // Always update the updatedAt timestamp
-  updateExpression.push('#updatedAt = :updatedAt');
-  expressionAttributeNames['#updatedAt'] = 'updatedAt';
-  expressionAttributeValues[':updatedAt'] = new Date().toISOString();
-
   const params = {
     TableName: TABLE_NAME,
     Key: { id },
-    UpdateExpression: `SET ${updateExpression.join(', ')}`,
-    ExpressionAttributeNames: expressionAttributeNames,
-    ExpressionAttributeValues: expressionAttributeValues,
+    UpdateExpression: 'set #status = :status',
+    ExpressionAttributeNames: {
+      '#status': 'status'
+    },
+    ExpressionAttributeValues: {
+      ':status': updates.status
+    },
     ReturnValues: 'ALL_NEW'
   };
 
@@ -117,18 +85,17 @@ export const deleteOrder = async (id) => {
   await dynamoDb.delete(params).promise();
 };
 
+
 export const cancelOrder = async (orderId) => {
   const params = {
     TableName: TABLE_NAME,
     Key: { id: orderId },
-    UpdateExpression: 'set #status = :status, #updatedAt = :updatedAt',
+    UpdateExpression: 'set #status = :status',
     ExpressionAttributeNames: {
       '#status': 'status',
-      '#updatedAt': 'updatedAt'
     },
     ExpressionAttributeValues: {
       ':status': 'Canceled',
-      ':updatedAt': new Date().toISOString()
     },
     ReturnValues: 'ALL_NEW'
   };

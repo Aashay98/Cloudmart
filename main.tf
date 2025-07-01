@@ -28,7 +28,6 @@ resource "aws_dynamodb_table" "cloudmart_products" {
     type = "S"
   }
 }
-
 resource "aws_dynamodb_table" "cloudmart_orders" {
   name           = "cloudmart-orders"
   billing_mode   = "PAY_PER_REQUEST"
@@ -37,27 +36,6 @@ resource "aws_dynamodb_table" "cloudmart_orders" {
   attribute {
     name = "id"
     type = "S"
-  }
-}
-
-resource "aws_dynamodb_table" "cloudmart_users" {
-  name           = "cloudmart-users"
-  billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "id"
-
-  attribute {
-    name = "id"
-    type = "S"
-  }
-
-  attribute {
-    name = "email"
-    type = "S"
-  }
-
-  global_secondary_index {
-    name     = "email-index"
-    hash_key = "email"
   }
 }
 
@@ -109,7 +87,6 @@ resource "aws_iam_role_policy" "lambda_policy" {
         Resource = [
           aws_dynamodb_table.cloudmart_products.arn,
           aws_dynamodb_table.cloudmart_orders.arn,
-          aws_dynamodb_table.cloudmart_users.arn,
           aws_dynamodb_table.cloudmart_tickets.arn,
           "arn:aws:logs:*:*:*"
         ]
