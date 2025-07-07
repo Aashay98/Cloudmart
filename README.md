@@ -15,6 +15,8 @@ Cloud Mart aims to:
 - **Order Processing**: Efficient order management with payment gateway integration.
 - **Scalable Infrastructure**: Auto-scaling and load balancing for optimal performance.
 - **Monitoring and Logging**: Uses CloudWatch for real-time insights and issue resolution.
+- **Role-based Access Control**: Different permissions for admins, customers, and support staff.
+- **Advanced Product Search**: Filter products by category and price range.
 
 ## 🏗️ Technology Stack
 **Frontend:**

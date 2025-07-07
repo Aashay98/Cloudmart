@@ -1,4 +1,4 @@
-import { updateUser, getUserById } from '../services/userService.js';
+import { updateUser, getUserById, updateUserRole } from '../services/userService.js';
 
 export const updateProfileController = async (req, res) => {
   try {
@@ -45,6 +45,25 @@ export const getUserProfileController = async (req, res) => {
     res.status(500).json({
       error: 'Failed to get profile',
       message: 'An error occurred while fetching profile'
+    });
+  }
+};
+
+export const updateUserRoleController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    const updatedUser = await updateUserRole(id, role);
+    res.json({
+      message: 'User role updated successfully',
+      user: updatedUser
+    });
+  } catch (error) {
+    console.error('Update role error:', error);
+    res.status(400).json({
+      error: 'Role update failed',
+      message: error.message
     });
   }
 };

@@ -1,11 +1,12 @@
 // controllers/productController.js
-import { 
-    getAllProducts, 
-    getProductById, 
-    createProduct, 
-    updateProduct, 
-    deleteProduct 
-  } from '../services/productService.js';
+import {
+  getAllProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  searchProducts,
+} from '../services/productService.js';
   
   export const getAllProductsController = async (req, res) => {
     try {
@@ -49,10 +50,26 @@ import {
   };
   
   export const deleteProductController = async (req, res) => {
-    try {
-      await deleteProduct(req.params.id);
-      res.json({ message: 'Product deleted successfully' });
-    } catch (error) {
-      res.status(500).json({ error: 'Error deleting product' });
-    }
-  };
+  try {
+    await deleteProduct(req.params.id);
+    res.json({ message: 'Product deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error deleting product' });
+  }
+};
+
+export const searchProductsController = async (req, res) => {
+  try {
+    const { q, category, minPrice, maxPrice } = req.query;
+    const products = await searchProducts({
+      searchTerm: q,
+      category,
+      minPrice,
+      maxPrice,
+    });
+    res.json(products);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Error searching products' });
+  }
+};

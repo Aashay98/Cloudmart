@@ -1,6 +1,7 @@
 import express from 'express';
-import { updateProfileController, getUserProfileController } from '../controllers/userController.js';
+import { updateProfileController, getUserProfileController, updateUserRoleController } from "../controllers/userController.js";
 import { authenticateToken } from '../middleware/auth.js';
+import { authorizeRoles } from "../middleware/roleMiddleware.js";
 import { body, validationResult } from 'express-validator';
 
 const router = express.Router();
@@ -42,5 +43,6 @@ router.put('/profile',
   handleValidationErrors,
   updateProfileController
 );
+router.put("/:id/role", authorizeRoles(["admin"]), updateUserRoleController);
 
 export default router;

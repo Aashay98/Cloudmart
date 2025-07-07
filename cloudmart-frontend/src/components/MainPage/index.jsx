@@ -53,16 +53,29 @@ const ProductCard = ({ product, onAddToCart }) => {
 
 const CloudMartMainPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [category, setCategory] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       try {
-        const response = await api.get("/products");
+        const params = new URLSearchParams();
+        if (searchTerm) params.append("q", searchTerm);
+        if (category) params.append("category", category);
+        if (minPrice) params.append("minPrice", minPrice);
+        if (maxPrice) params.append("maxPrice", maxPrice);
+
+        const url = params.toString()
+          ? `/products/search?${params.toString()}`
+          : "/products";
+
+        const response = await api.get(url);
         setProducts(response.data);
-        setLoading(false);
       } catch (err) {
         setError("Failed to fetch products. Please try again later.");
         setLoading(false);
@@ -70,7 +83,7 @@ const CloudMartMainPage = () => {
     };
 
     fetchProducts();
-  }, []);
+  }, [searchTerm, category, minPrice, maxPrice]);
 
   const handleAddToCart = (product) => {
     addToCart(product);
@@ -80,10 +93,6 @@ const CloudMartMainPage = () => {
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
-
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
@@ -101,19 +110,40 @@ const CloudMartMainPage = () => {
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
           </div>
+          <div className="flex space-x-2 ml-4">
+            <input
+              type="text"
+              placeholder="Category"
+              className="py-2 px-3 border border-gray-300 rounded"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            />
+            <input
+              type="number"
+              placeholder="Min"
+              className="py-2 px-3 border border-gray-300 rounded w-24"
+              value={minPrice}
+              onChange={(e) => setMinPrice(e.target.value)}
+            />
+            <input
+              type="number"
+              placeholder="Max"
+              className="py-2 px-3 border border-gray-300 rounded w-24"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value)}
+            />
+          </div>
         </div>
 
         {loading ? (
           <LoadingSpinner />
         ) : error ? (
           <p className="text-center text-red-500 mt-6">{error}</p>
-        ) : filteredProducts.length === 0 ? (
-          <p className="text-center text-gray-500 mt-6">
-            No products found matching your search.
-          </p>
+        ) : products.length === 0 ? (
+          <p className="text-center text-gray-500 mt-6">No products found.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
+            {products.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}

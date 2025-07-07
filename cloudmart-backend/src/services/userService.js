@@ -198,3 +198,28 @@ export const deactivateUser = async (id) => {
   const { password: _, ...userWithoutPassword } = result.Attributes;
   return userWithoutPassword;
 };
+
+export const updateUserRole = async (id, role) => {
+  const allowedRoles = ['admin', 'customer', 'support'];
+  if (!allowedRoles.includes(role)) {
+    throw new Error('Invalid role');
+  }
+
+  const params = {
+    TableName: USERS_TABLE,
+    Key: { id },
+    UpdateExpression: 'SET #role = :role, updatedAt = :updatedAt',
+    ExpressionAttributeNames: {
+      '#role': 'role'
+    },
+    ExpressionAttributeValues: {
+      ':role': role,
+      ':updatedAt': new Date().toISOString()
+    },
+    ReturnValues: 'ALL_NEW'
+  };
+
+  const result = await dynamoDb.update(params).promise();
+  const { password: _, ...userWithoutPassword } = result.Attributes;
+  return userWithoutPassword;
+};

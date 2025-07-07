@@ -72,3 +72,51 @@ export const deleteProduct = async (id) => {
 
   await dynamoDb.delete(params).promise();
 };
+
+export const searchProducts = async ({ searchTerm, category, minPrice, maxPrice }) => {
+  const filterExpressions = [];
+  const expressionAttributeNames = {};
+  const expressionAttributeValues = {};
+
+  if (searchTerm) {
+    filterExpressions.push('contains(#name, :search)');
+    expressionAttributeNames['#name'] = 'name';
+    expressionAttributeValues[':search'] = searchTerm;
+  }
+
+  if (category) {
+    filterExpressions.push('#category = :category');
+    expressionAttributeNames['#category'] = 'category';
+    expressionAttributeValues[':category'] = category;
+  }
+
+  if (minPrice) {
+    filterExpressions.push('#price >= :minPrice');
+    expressionAttributeNames['#price'] = 'price';
+    expressionAttributeValues[':minPrice'] = Number(minPrice);
+  }
+
+  if (maxPrice) {
+    if (!expressionAttributeNames['#price']) {
+      expressionAttributeNames['#price'] = 'price';
+    }
+    filterExpressions.push('#price <= :maxPrice');
+    expressionAttributeValues[':maxPrice'] = Number(maxPrice);
+  }
+
+  const params = {
+    TableName: TABLE_NAME,
+    FilterExpression: filterExpressions.join(' AND '),
+    ExpressionAttributeNames:
+      Object.keys(expressionAttributeNames).length > 0
+        ? expressionAttributeNames
+        : undefined,
+    ExpressionAttributeValues:
+      Object.keys(expressionAttributeValues).length > 0
+        ? expressionAttributeValues
+        : undefined,
+  };
+
+  const result = await dynamoDb.scan(params).promise();
+  return result.Items;
+};
