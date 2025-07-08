@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import productRoutes from "./routes/productRoutes.js";
+import cartRoutes from "./routes/cartRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -52,6 +53,7 @@ app.use("/api/products", optionalAuth, productRoutes);
 
 // Protected routes
 app.use("/api/orders", authenticateToken, orderRoutes);
+app.use("/api/cart", authenticateToken, cartRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/ai", authenticateToken, aiRoutes);
 

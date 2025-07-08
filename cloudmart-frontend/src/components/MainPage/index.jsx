@@ -78,7 +78,7 @@ const CloudMartMainPage = () => {
         setProducts(response.data);
       } catch (err) {
         setError("Failed to fetch products. Please try again later.");
-        setLoading(false);
+      } finally {  setLoading(false);
       }
     };
 

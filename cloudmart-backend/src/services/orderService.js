@@ -10,6 +10,7 @@ export const createOrder = async (order) => {
     Item: {
       ...order,
       id: uuidv4().split('-')[0],
+      paymentStatus: order.paymentStatus || 'Pending',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     }
@@ -66,7 +67,7 @@ export const getOrdersByUserId = async (userId) => {
 };
 
 export const updateOrder = async (id, updates) => {
-  const allowedUpdates = ['status', 'items', 'total'];
+  const allowedUpdates = ['status', 'items', 'total', 'paymentStatus'];
   const updateExpression = [];
   const expressionAttributeNames = {};
   const expressionAttributeValues = {};

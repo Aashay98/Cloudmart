@@ -17,6 +17,7 @@ Cloud Mart aims to:
 - **Monitoring and Logging**: Uses CloudWatch for real-time insights and issue resolution.
 - **Role-based Access Control**: Different permissions for admins, customers, and support staff.
 - **Advanced Product Search**: Filter products by category and price range.
+- **Persistent Shopping Cart & Checkout**: Cart data saved to your account with email confirmations and payment tracking.
 
 ## 🏗️ Technology Stack
 **Frontend:**

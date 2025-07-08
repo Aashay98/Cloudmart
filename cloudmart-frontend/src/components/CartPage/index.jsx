@@ -8,6 +8,8 @@ import {
   removeFromCart,
   updateCartItemQuantity,
   clearCart,
+  fetchServerCart,
+  syncCartWithServer
 } from "../../utils/cartUtils";
 import { getUser } from "../../utils/userUtils";
 import api from "../../config/axiosConfig";
@@ -135,17 +137,22 @@ const CartPage = () => {
 
   useEffect(() => {
     setCartItems(getCartItems());
+    fetchServerCart().catch(() => {});
   }, []);
 
   const handleRemoveItem = (id) => {
     removeFromCart(id);
-    setCartItems(getCartItems());
+    const items = getCartItems();
+    setCartItems(items);
+    syncCartWithServer(items).catch(() => {});
   };
 
   const handleUpdateQuantity = (id, newQuantity) => {
     if (newQuantity < 1) return;
     updateCartItemQuantity(id, newQuantity);
-    setCartItems(getCartItems());
+    const items = getCartItems();
+    setCartItems(items);
+    syncCartWithServer(items).catch(() => {});
   };
 
   const handleCreateOrder = async () => {
@@ -158,22 +165,11 @@ const CartPage = () => {
         return;
       }
 
-      const order = {
-        userEmail: user.email,
-        status: "Pending",
-        items: cartItems.map((item) => ({
-          productId: item.id,
-          name: item.name,
-          quantity: item.quantity,
-          price: item.price,
-        })),
-        total: totalPrice,
-        createdAt: new Date().toISOString(),
-      };
+      await api.post("/cart/checkout", { paymentStatus: "Pending" });
 
-      await api.post("/orders", order);
       clearCart();
-      setCartItems([]); // Update local state
+      setCartItems([]);
+      syncCartWithServer([]).catch(() => {});
       setOrderSuccess(true);
       setIsConfirmationOpen(false);
     } catch (err) {
