@@ -60,20 +60,6 @@ export const isAdmin = () => {
 // Initialize user for backward compatibility
 export const initializeUser = () => {
   const existingUser = getUser();
-  if (!existingUser && !isAuthenticated()) {
-    // Create anonymous user for demo purposes
-    const randomNumber = Math.floor(Math.random() * 10000);
-    const anonymousUser = {
-      id: `anonymous_${randomNumber}`,
-      email: `user${randomNumber}@example.com`,
-      firstName: 'Anonymous',
-      lastName: `User${randomNumber}`,
-      phone: '',
-      role: 'customer',
-      isAnonymous: true
-    };
-    localStorage.setItem(USER_KEY, JSON.stringify(anonymousUser));
-    return anonymousUser;
-  }
+  // Only return user if authenticated, don't create anonymous users
   return existingUser;
 };

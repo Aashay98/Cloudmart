@@ -17,7 +17,7 @@ const Header = () => {
   useEffect(() => {
     const user = getUser();
     if (user) {
-      setUserName(`${user.firstName}`.trim() || 'User');
+      setUserName(`${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'User');
     }
 
     const updateCartCount = () => {

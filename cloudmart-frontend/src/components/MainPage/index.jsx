@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Search, MessageCircle } from "lucide-react";
+import { toast } from "react-toastify";
 import Header from "../Header";
 import Footer from "../Footer";
 import LoadingSpinner from "../LoadingSpinner";
-import { addToCart } from "../../utils/cartUtils";
+import { addToCart, syncCartWithServer } from "../../utils/cartUtils";
+import { isAuthenticated } from "../../utils/authUtils";
 import api from "../../config/axiosConfig";
 import AIAssistant from "../AIAssistant";
 import { Link } from 'react-router-dom';
@@ -91,7 +93,15 @@ const CloudMartMainPage = () => {
 
   const handleAddToCart = (product) => {
     addToCart(product);
-    // You might want to update the cart count in the header here
+    toast.success(`${product.name} added to cart!`);
+    
+    // Sync with server if authenticated
+    if (isAuthenticated()) {
+      syncCartWithServer(JSON.parse(localStorage.getItem('cloudmart_cart')) || [])
+        .catch(() => {
+          // Silent fail for cart sync
+        });
+    }
   };
 
   const handleSearch = (e) => {

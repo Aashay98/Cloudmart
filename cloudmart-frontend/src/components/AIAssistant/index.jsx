@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { MessageCircle, X, Send } from "lucide-react";
+import { toast } from "react-toastify";
+import { isAuthenticated } from "../../utils/authUtils";
 import api from "../../config/axiosConfig";
 
 const TypingIndicator = () => (
@@ -28,11 +30,17 @@ const AIAssistant = () => {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
 
+  // Check if user is authenticated
+  const authenticated = isAuthenticated();
+
   useEffect(() => {
-    if (isOpen && !conversationId) {
+    if (isOpen && !conversationId && authenticated) {
       startNewConversation();
+    } else if (isOpen && !authenticated) {
+      toast.error("Please log in to use the AI assistant");
+      setIsOpen(false);
     }
-  }, [isOpen]);
+  }, [isOpen, authenticated]);
 
   useEffect(() => {
     scrollToBottom();
@@ -44,6 +52,7 @@ const AIAssistant = () => {
       setConversationId(response.data.conversationId);
     } catch (error) {
       console.error("Error starting new conversation:", error);
+      toast.error("Failed to start conversation. Please try again.");
     }
   };
 
@@ -81,6 +90,7 @@ const AIAssistant = () => {
       setMessages((prevMessages) => [...prevMessages, aiResponse]);
     } catch (error) {
       console.error("Error sending message:", error);
+      toast.error("Failed to send message. Please try again.");
       setIsTyping(false);
       setMessages((prevMessages) => [
         ...prevMessages,

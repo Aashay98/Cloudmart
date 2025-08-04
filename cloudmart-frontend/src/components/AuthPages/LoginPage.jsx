@@ -30,7 +30,9 @@ const LoginPage = () => {
       toast.success('Login successful!');
       navigate(from, { replace: true });
     } catch (error) {
-      const message = error.response?.data?.message || 'Login failed';
+      const message = error.response?.data?.message || 
+                     error.response?.data?.details?.[0]?.msg || 
+                     'Login failed';
       toast.error(message);
     } finally {
       setIsLoading(false);

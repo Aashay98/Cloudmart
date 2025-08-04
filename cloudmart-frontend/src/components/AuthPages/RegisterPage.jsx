@@ -30,7 +30,9 @@ const RegisterPage = () => {
       toast.success('Registration successful! Welcome to CloudMart!');
       navigate('/');
     } catch (error) {
-      const message = error.response?.data?.message || 'Registration failed';
+      const message = error.response?.data?.message || 
+                     error.response?.data?.details?.[0]?.msg || 
+                     'Registration failed';
       toast.error(message);
     } finally {
       setIsLoading(false);

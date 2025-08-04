@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Send, Plus, Trash2 } from "lucide-react";
+import { toast } from "react-toastify";
+import { isAuthenticated } from "../../utils/authUtils";
 import Header from "../Header";
 import Footer from "../Footer";
 import api from "../../config/axiosConfig";
@@ -30,6 +32,9 @@ const CustomerSupportPage = () => {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+
+  // Check if user is authenticated
+  const authenticated = isAuthenticated();
 
   useEffect(() => {
     loadThreadsFromLocalStorage();
@@ -70,6 +75,11 @@ const CustomerSupportPage = () => {
   };
 
   const createNewThread = async () => {
+    if (!authenticated) {
+      toast.error("Please log in to create a support thread");
+      return;
+    }
+    
     try {
       const response = await api.post("/ai/start");
       const newThread = {
@@ -84,6 +94,7 @@ const CustomerSupportPage = () => {
       setMessages([]);
     } catch (error) {
       console.error("Error creating new thread:", error);
+      toast.error("Failed to create new thread. Please try again.");
     }
   };
 
@@ -100,6 +111,11 @@ const CustomerSupportPage = () => {
 
   const handleSendMessage = async () => {
     if (inputMessage.trim() === "" || !currentThreadId || isLoading) return;
+
+    if (!authenticated) {
+      toast.error("Please log in to send messages");
+      return;
+    }
 
     const newMessage = { text: inputMessage, sender: "user" };
     const updatedMessages = [...messages, newMessage];
@@ -129,6 +145,7 @@ const CustomerSupportPage = () => {
       saveThreadsToLocalStorage(updatedThreads);
     } catch (error) {
       console.error("Error sending message:", error);
+      toast.error("Failed to send message. Please try again.");
       setIsTyping(false);
       setMessages([
         ...updatedMessages,

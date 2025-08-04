@@ -21,6 +21,13 @@ export const addToCart = (product) => {
     cartItems.push({ ...product, quantity: 1 });
   }
   saveCartItems(cartItems);
+  
+  // Sync with server if authenticated
+  if (isAuthenticated()) {
+    syncCartWithServer(cartItems).catch(() => {
+      // Silent fail for cart sync
+    });
+  }
 };
 
 export const removeFromCart = (productId) => {

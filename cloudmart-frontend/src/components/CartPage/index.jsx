@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Trash2, X } from "lucide-react";
+import { toast } from "react-toastify";
 import Header from "../Header";
 import Footer from "../Footer";
 import {
@@ -162,6 +163,7 @@ const CartPage = () => {
       const user = getUser();
       if (!user || !user.email) {
         setError("Please log in to complete your order.");
+        toast.error("Please log in to complete your order.");
         return;
       }
 
@@ -172,9 +174,12 @@ const CartPage = () => {
       syncCartWithServer([]).catch(() => {});
       setOrderSuccess(true);
       setIsConfirmationOpen(false);
+      toast.success("Order placed successfully!");
     } catch (err) {
       console.error("Error creating order:", err);
-      setError("Failed to create order. Please try again.");
+      const errorMessage = err.response?.data?.message || "Failed to create order. Please try again.";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

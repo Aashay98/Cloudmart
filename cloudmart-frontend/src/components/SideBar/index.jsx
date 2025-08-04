@@ -1,9 +1,12 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { X } from 'lucide-react';
+import { isAuthenticated, isAdmin } from '../../utils/authUtils';
 
 const SideBar = ({ isOpen, onClose }) => {
+  const authenticated = isAuthenticated();
+  const userIsAdmin = isAdmin();
+
   return (
     <div 
       className={`fixed top-0 left-0 h-full w-64 bg-blue-700 text-white transform transition-transform duration-300 ease-in-out ${
@@ -32,6 +35,20 @@ const SideBar = ({ isOpen, onClose }) => {
                 My Orders
               </Link>
             </li>
+            {authenticated && userIsAdmin && (
+              <>
+                <li>
+                  <Link to="/admin" className="block px-2 py-2 hover:bg-blue-600" onClick={onClose}>
+                    Admin Panel
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/orders" className="block px-2 py-2 hover:bg-blue-600" onClick={onClose}>
+                    All Orders
+                  </Link>
+                </li>
+              </>
+            )}
             <li>
               <Link to="/about" className="block px-2 py-2 hover:bg-blue-600" onClick={onClose}>
                 About Us

@@ -60,7 +60,9 @@ const UserProfilePage = () => {
       setSuccessMessage('Profile updated successfully!');
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
-      const message = error.response?.data?.message || 'Failed to update profile';
+      const message = error.response?.data?.message || 
+                     error.response?.data?.details?.[0]?.msg || 
+                     'Failed to update profile';
       toast.error(message);
     }
   };
@@ -76,7 +78,9 @@ const UserProfilePage = () => {
       resetPassword();
       setShowPasswordForm(false);
     } catch (error) {
-      const message = error.response?.data?.message || 'Failed to update password';
+      const message = error.response?.data?.message || 
+                     error.response?.data?.details?.[0]?.msg || 
+                     'Failed to update password';
       toast.error(message);
     }
   };

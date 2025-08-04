@@ -5,6 +5,7 @@ import Footer from "../Footer";
 import LoadingSpinner from "../LoadingSpinner";
 import api from "../../config/axiosConfig";
 import { getUser } from "../../utils/userUtils";
+import { isAuthenticated } from "../../utils/authUtils";
 
 const OrderStatus = ({ status }) => {
   const getStatusColor = (status) => {
@@ -73,11 +74,21 @@ const MyOrdersPage = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
+      if (!isAuthenticated()) {
+        setError("Please log in to view your orders.");
+        setLoading(false);
+        return;
+      }
+      
       try {
-        // Assume we have the user's email stored in localStorage
         const user = getUser();
+        if (!user || !user.email) {
+          setError("User information not found. Please log in again.");
+          setLoading(false);
+          return;
+        }
+        
         const response = await api.get(`/orders/user?email=${user.email}`);
-        console.log(response);
         setOrders(response.data);
         setLoading(false);
       } catch (err) {
