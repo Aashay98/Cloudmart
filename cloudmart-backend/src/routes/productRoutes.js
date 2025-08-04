@@ -6,13 +6,15 @@ import {
   createProductController,
   updateProductController,
   deleteProductController,
-  searchProductsController
+  searchProductsController,
+  compareProductPricesController
 } from '../controllers/productController.js';
 
 const router = express.Router();
 
 router.get('/', getAllProductsController);
 router.get('/search', searchProductsController);
+router.get('/compare', compareProductPricesController);
 router.get('/:id', getProductByIdController);
 router.post('/', createProductController);
 router.put('/:id', updateProductController);

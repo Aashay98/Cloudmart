@@ -7,6 +7,7 @@ import {
   deleteProduct,
   searchProducts,
 } from '../services/productService.js';
+import { compareProductPrices } from '../services/priceComparisonService.js';
   
   export const getAllProductsController = async (req, res) => {
     try {
@@ -71,5 +72,19 @@ export const searchProductsController = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Error searching products' });
+  }
+};
+
+export const compareProductPricesController = async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q) {
+      return res.status(400).json({ error: 'Product query is required' });
+    }
+    const comparisons = await compareProductPrices(q);
+    res.json(comparisons);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Error comparing product prices' });
   }
 };

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Search, MessageCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search } from "lucide-react";
 import { toast } from "react-toastify";
 import Header from "../Header";
 import Footer from "../Footer";
@@ -9,9 +9,11 @@ import { isAuthenticated } from "../../utils/authUtils";
 import api from "../../config/axiosConfig";
 import AIAssistant from "../AIAssistant";
 import { Link } from 'react-router-dom';
+import PriceComparisonModal from "../PriceComparisonModal";
 
 
 const ProductCard = ({ product, onAddToCart }) => {
+  const [showComparison, setShowComparison] = useState(false);
   const truncatedTitle =
     product.name.length > 60 ? product.name.slice(0, 60) + "..." : product.name;
 
@@ -52,7 +54,19 @@ const ProductCard = ({ product, onAddToCart }) => {
         >
           Add to Cart
         </button>
+        <button
+          onClick={() => setShowComparison(true)}
+          className="mt-2 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors w-full"
+        >
+          Compare Prices
+        </button>
       </div>
+      {showComparison && (
+        <PriceComparisonModal
+          productName={product.name}
+          onClose={() => setShowComparison(false)}
+        />
+      )}
     </div>
   );
 };
