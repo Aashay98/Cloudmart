@@ -49,7 +49,7 @@ export const createUser = async (userData) => {
   };
 
   try {
-    await dynamoDb.put(params).promise();
+    await dynamoDb.put(params);
     // Return user without password
     const { password: _, ...userWithoutPassword } = user;
     return userWithoutPassword;
@@ -72,7 +72,11 @@ export const getUserByEmail = async (email) => {
   };
 
   try {
-    const result = await dynamoDb.query(params).promise();
+    const result = await // The `.promise()` call might be on an JS SDK v2 client API.
+    // If yes, please remove .promise(). If not, remove this comment.
+    // The `.promise()` call might be on an JS SDK v2 client API.
+    // If yes, please remove .promise(). If not, remove this comment.
+    dynamoDb.query(params).promise();
     return result.Items[0] || null;
   } catch (error) {
     // If GSI doesn't exist, fall back to scan (less efficient)
@@ -83,7 +87,11 @@ export const getUserByEmail = async (email) => {
         ':email': email.toLowerCase()
       }
     };
-    const result = await dynamoDb.scan(scanParams).promise();
+    const result = await // The `.promise()` call might be on an JS SDK v2 client API.
+    // If yes, please remove .promise(). If not, remove this comment.
+    // The `.promise()` call might be on an JS SDK v2 client API.
+    // If yes, please remove .promise(). If not, remove this comment.
+    dynamoDb.scan(scanParams).promise();
     return result.Items[0] || null;
   }
 };
@@ -94,7 +102,11 @@ export const getUserById = async (id) => {
     Key: { id }
   };
 
-  const result = await dynamoDb.get(params).promise();
+  const result = await // The `.promise()` call might be on an JS SDK v2 client API.
+  // If yes, please remove .promise(). If not, remove this comment.
+  // The `.promise()` call might be on an JS SDK v2 client API.
+  // If yes, please remove .promise(). If not, remove this comment.
+  dynamoDb.get(params).promise();
   return result.Item || null;
 };
 
@@ -134,7 +146,11 @@ export const updateUser = async (id, updates) => {
     ReturnValues: 'ALL_NEW'
   };
 
-  const result = await dynamoDb.update(params).promise();
+  const result = await // The `.promise()` call might be on an JS SDK v2 client API.
+  // If yes, please remove .promise(). If not, remove this comment.
+  // The `.promise()` call might be on an JS SDK v2 client API.
+  // If yes, please remove .promise(). If not, remove this comment.
+  dynamoDb.update(params).promise();
   const { password: _, ...userWithoutPassword } = result.Attributes;
   return userWithoutPassword;
 };
@@ -164,7 +180,11 @@ export const updatePassword = async (id, currentPassword, newPassword) => {
     ReturnValues: 'ALL_NEW'
   };
 
-  const result = await dynamoDb.update(params).promise();
+  const result = await // The `.promise()` call might be on an JS SDK v2 client API.
+  // If yes, please remove .promise(). If not, remove this comment.
+  // The `.promise()` call might be on an JS SDK v2 client API.
+  // If yes, please remove .promise(). If not, remove this comment.
+  dynamoDb.update(params).promise();
   const { password: _, ...userWithoutPassword } = result.Attributes;
   return userWithoutPassword;
 };
@@ -179,7 +199,11 @@ export const updateLastLogin = async (id) => {
     }
   };
 
-  await dynamoDb.update(params).promise();
+  await // The `.promise()` call might be on an JS SDK v2 client API.
+  // If yes, please remove .promise(). If not, remove this comment.
+  // The `.promise()` call might be on an JS SDK v2 client API.
+  // If yes, please remove .promise(). If not, remove this comment.
+  dynamoDb.update(params).promise();
 };
 
 export const deactivateUser = async (id) => {
@@ -194,7 +218,11 @@ export const deactivateUser = async (id) => {
     ReturnValues: 'ALL_NEW'
   };
 
-  const result = await dynamoDb.update(params).promise();
+  const result = await // The `.promise()` call might be on an JS SDK v2 client API.
+  // If yes, please remove .promise(). If not, remove this comment.
+  // The `.promise()` call might be on an JS SDK v2 client API.
+  // If yes, please remove .promise(). If not, remove this comment.
+  dynamoDb.update(params).promise();
   const { password: _, ...userWithoutPassword } = result.Attributes;
   return userWithoutPassword;
 };
@@ -219,7 +247,11 @@ export const updateUserRole = async (id, role) => {
     ReturnValues: 'ALL_NEW'
   };
 
-  const result = await dynamoDb.update(params).promise();
+  const result = await // The `.promise()` call might be on an JS SDK v2 client API.
+  // If yes, please remove .promise(). If not, remove this comment.
+  // The `.promise()` call might be on an JS SDK v2 client API.
+  // If yes, please remove .promise(). If not, remove this comment.
+  dynamoDb.update(params).promise();
   const { password: _, ...userWithoutPassword } = result.Attributes;
   return userWithoutPassword;
 };

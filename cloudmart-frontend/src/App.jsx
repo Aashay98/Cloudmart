@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import CloudMartMainPage from './components/MainPage';
 import CustomerSupportPage from './components/SupportPage';
+import ProductPage from './components/ProductPage';
 import AboutPage from './components/AboutPage';
 import CartPage from './components/CartPage';
 import AdminPage from './components/AdminPage';
@@ -30,6 +31,7 @@ function App() {
         <Route path="/customer-support" element={<CustomerSupportPage />} />
         <Route path="/about" element={<AboutPage />} />  
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/product/:id" element={<ProductPage />} />
         
         {/* Protected Routes */}
         <Route 

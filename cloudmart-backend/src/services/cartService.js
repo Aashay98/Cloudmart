@@ -1,4 +1,4 @@
-import { dynamoDb } from '../dbClient';
+import { dynamoDb } from '../dbClient.js';
 import { createOrder } from './orderService.js';
 import { getUserById } from './userService.js';
 import { sendConfirmationEmail } from '../utils/email.js';

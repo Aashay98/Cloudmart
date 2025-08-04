@@ -1,5 +1,5 @@
 // services/productService.js
-import { dynamoDb }from "../dbClient"
+import { dynamoDb }from "../dbClient.js"
 import { v4 as uuidv4 } from 'uuid';
 
 const TABLE_NAME = 'cloudmart-products';

@@ -1,6 +1,6 @@
-
-
 const CART_KEY = 'cloudmart_cart';
+import api from '../config/axiosConfig';
+import { isAuthenticated } from './authUtils';
 
 export const getCartItems = () => {
   const cartItems = localStorage.getItem(CART_KEY);
@@ -46,4 +46,17 @@ export const getCartItemsCount = () => {
 export const clearCart = () => {
   saveCartItems([]);
   // localStorage.removeItem('cloudmart_cart');
+};
+
+export const fetchServerCart = async () => {
+  if (!isAuthenticated()) return null;
+  const res = await api.get('/cart');
+  const items = res.data.items || [];
+  saveCartItems(items);
+  return items;
+};
+
+export const syncCartWithServer = async (items) => {
+  if (!isAuthenticated()) return;
+  await api.put('/cart', { items });
 };

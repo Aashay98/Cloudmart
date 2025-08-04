@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import productRoutes from "./routes/productRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -23,7 +24,7 @@ app.use(helmet({
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: process.env.FRONTEND_URL || 'http://localhost:5001',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -47,6 +48,7 @@ app.get('/health', (req, res) => {
 
 // Public routes
 app.use("/api/auth", authRoutes);
+app.use("/api/products", reviewRoutes);
 
 // Routes with optional authentication
 app.use("/api/products", optionalAuth, productRoutes);

@@ -1,6 +1,6 @@
 
 import { v4 as uuidv4 } from 'uuid';
-import { dynamoDb } from "../dbClient"
+import { dynamoDb } from "../dbClient.js"
 
 const TABLE_NAME = 'cloudmart-orders';
 

@@ -6,6 +6,8 @@ import LoadingSpinner from "../LoadingSpinner";
 import { addToCart } from "../../utils/cartUtils";
 import api from "../../config/axiosConfig";
 import AIAssistant from "../AIAssistant";
+import { Link } from 'react-router-dom';
+
 
 const ProductCard = ({ product, onAddToCart }) => {
   const truncatedTitle =
@@ -19,16 +21,18 @@ const ProductCard = ({ product, onAddToCart }) => {
   return (
     <div className="bg-white p-4 rounded-lg shadow-md flex flex-col justify-between h-full">
       <div>
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-48 object-contain mb-4"
-        />
+       <Link to={`/product/${product.id}`}>
+          <img
+            src={product.image}
+            alt={product.name}
+            className="w-full h-48 object-contain mb-4"
+          />
+        </Link>
         <h3
           className="text-lg font-semibold overflow-hidden"
           title={product.name}
         >
-          {truncatedTitle}
+          <Link to={`/product/${product.id}`}>{truncatedTitle}</Link>
         </h3>
 
         <h3
