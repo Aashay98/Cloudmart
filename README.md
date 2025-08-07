@@ -37,3 +37,12 @@ Cloud Mart aims to:
 ## 📂 Project Structure
 
 ![image](https://github.com/user-attachments/assets/86ad3306-0d16-4858-b501-c7f1915aa182)
+
+## Running Backend Tests
+
+Navigate to the backend directory and run the test suite with npm:
+
+```bash
+cd cloudmart-backend
+npm test
+```
